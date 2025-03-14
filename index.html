@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MQTT Light Control</title>
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Title */
+        h1 {
+            font-size: 3rem;
+            background: linear-gradient(90deg, #ff00ff, #00ffff);
+            -webkit-background-clip: text;
+            color: transparent;
+            animation: glow 2s infinite alternate;
+        }
+
+        /* Buttons */
+        .btn {
+            font-size: 24px;
+            padding: 15px 30px;
+            margin: 20px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        /* ON Button */
+        .btn-on {
+            background: linear-gradient(90deg, #00ff00, #66ff66);
+            color: black;
+        }
+        .btn-on:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px #00ff00;
+        }
+
+        /* OFF Button */
+        .btn-off {
+            background: linear-gradient(90deg, #ff0000, #ff6666);
+            color: black;
+        }
+        .btn-off:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px #ff0000;
+        }
+
+        /* Status Text */
+        #status {
+            font-size: 2rem;
+            margin-top: 30px;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Animation */
+        @keyframes glow {
+            0% { text-shadow: 0 0 5px #ff00ff; }
+            100% { text-shadow: 0 0 20px #00ffff; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>MQTT Light Control</h1>
+    <button class="btn btn-on" onclick="sendCommand('ON')">💡 Turn ON</button>
+    <button class="btn btn-off" onclick="sendCommand('OFF')">🚫 Turn OFF</button>
+    <p id="status">Status: Waiting for command...</p>
+
+    <script>
+        const broker = "wss://test.mosquitto.org:8081/mqtt";  // Public MQTT Broker
+        const topic = "/student_group/light_control";
+
+        // Connect to MQTT broker
+        const client = mqtt.connect(broker);
+
+        client.on("connect", function () {
+            console.log("Connected to MQTT broker");
+        });
+
+        function sendCommand(command) {
+            client.publish(topic, command);
+            document.getElementById("status").innerText = "Status: " + command;
+            console.log("Sent command:", command);
+        }
+    </script>
+
+</body>
+</html>
